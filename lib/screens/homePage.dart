@@ -24,8 +24,16 @@ class _HomePageState extends State<HomePage> {
 
   void startListening() async{
        await _speechToText.listen(onResult:_onSpeechResult );
+       setState(() {
+         _coonfidenceLevel = 0;
+       });
   }
-
+  void stopListening()async{
+     await _speechToText.stop();
+     setState(() {
+       
+     });
+  }
   void _onSpeechResult (result){
     setState(() {
       _wordSpoken = "${result.recognizedWords}";
@@ -55,12 +63,21 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12.0),
             child: Text(_speechToText.isListening ?"Listening": speechEnabled? "Tap the microphone to start listening": "Speech is not available"),
-
-          )
+          ),
+          Expanded(child: Container(
+            padding: const EdgeInsets.all(12.0),
+            child: Text(_wordSpoken),))
         ],
       ),
+    ),
+    floatingActionButton: FloatingActionButton(onPressed: _speechToText.isListening ? stopListening : startListening,
+    tooltip: "Listen",
+    backgroundColor: Colors.black,
+    child: Icon(_speechToText.isNotListening? Icons.mic_off : Icons.mic,
+    color: Colors.white,
+    ),
     ),
     );
   }
